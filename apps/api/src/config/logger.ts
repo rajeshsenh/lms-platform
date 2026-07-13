@@ -113,7 +113,7 @@ interface RequestContext {
 	userId?: string;
 }
 
-const redactFormat = format((info) => {
+const _redactFormat = format((info) => {
 	return redactSensitiveData(info) as never;
 });
 
@@ -140,7 +140,7 @@ const productionFormat = combine(
 		stack: true,
 	}),
 	timestamp(),
-	redactFormat(),
+	// redactFormat(),
 	enrichMetadata(),
 	json(),
 );

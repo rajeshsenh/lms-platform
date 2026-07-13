@@ -1,13 +1,16 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import express from "express";
+import express, { type NextFunction, type Request, type Response } from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 
 import { env } from "./config/env";
 import logger from "./config/logger";
+import authRouter from "./modules/auth/auth.routes";
 
 const app = express();
+
+const API_PREFIX = "/api/v1";
 
 // 1. Security Headers
 app.use(
@@ -46,6 +49,7 @@ const apiLimiter = rateLimit({
 app.use("/api", apiLimiter);
 
 // 6. API Routes
+app.use(`${API_PREFIX}/auth`, authRouter);
 
 // 7. Health check endpoint
 app.get("/health", (_, res) => {
@@ -53,10 +57,11 @@ app.get("/health", (_, res) => {
 });
 
 // 8. Global Error Handler
-app.use((err: any, _req: express.Request, res: express.Response) => {
+app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
 	logger.error("Global Error Handler caught an uncaught exception:", err);
-	res.status(err.status || 500).json({
-		error: err.message || "Internal Server Error",
+	res.status(500).json({
+		status: "error",
+		message: err instanceof Error ? err.message : "Internal Server Error",
 	});
 });
 

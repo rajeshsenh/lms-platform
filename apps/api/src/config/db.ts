@@ -29,4 +29,4 @@ const checkDataBaseConnection = async () => {
 	}
 };
 
-export { checkDataBaseConnection };
+export { checkDataBaseConnection, prisma };
