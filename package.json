@@ -1,0 +1,28 @@
+{
+	"name": "lms-platform",
+	"private": true,
+	"scripts": {
+		"build": "turbo run build",
+		"dev": "turbo run dev",
+		"lint": "biome check . --write",
+		"format": "biome format . --write",
+		"check-types": "turbo run check-types",
+		"prepare": "husky"
+	},
+	"lint-staged": {
+		"*.{js,jsx,ts,tsx,json}": [
+			"biome check --write --unsafe"
+		]
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.5.3",
+		"husky": "^9.1.7",
+		"lint-staged": "^17.0.8",
+		"turbo": "^2.10.4",
+		"typescript": "5.9.2"
+	},
+	"packageManager": "pnpm@9.0.0",
+	"engines": {
+		"node": ">=18"
+	}
+}

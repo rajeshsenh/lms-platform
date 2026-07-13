@@ -1,0 +1,251 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  moduleFormat = "cjs"
+  importFileExtension = "ts"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// -------------------------------------------------------------
+// Enums
+// -------------------------------------------------------------
+enum UserRole {
+  STUDENT
+  INSTRUCTOR
+  ADMIN
+}
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+  DELETED
+}
+
+enum LessonType {
+  VIDEO
+  QUIZ
+  ARTICLE
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+  DELETED
+}
+
+///////////////////// 
+// USERS 
+/////////////////////
+
+model User {
+  id            String           @id @default(uuid())
+  firstName     String           @db.VarChar(100)
+  lastName      String           @db.VarChar(100)
+  email         String           @unique @db.VarChar(255)
+  password      String           @db.VarChar(255)
+  role          UserRole         @default(STUDENT)
+  avatarUrl     String?
+  isActive      Boolean          @default(true)
+  emailVerified Boolean          @default(false)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  courses       Course[]
+  enrollemnts   Enrollment[]
+  wishlist      Wishlist[]
+  payments      Payment[]
+  progress      LessonProgress[]
+  reviews       CourseReview[]
+  status        UserStatus       @default(ACTIVE)
+
+  @@index([email])
+}
+
+///////////////////// 
+// CATEGORY 
+/////////////////////
+
+model Category {
+  id          String     @id @default(uuid())
+  name        String
+  slug        String     @unique
+  description String?
+  parentId    String?
+  parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  courses     Course[]
+  createdBy   String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+/////////////////////  
+// COURSE 
+/////////////////////
+
+model Course {
+  id           String         @id @default(uuid())
+  title        String
+  slug         String         @unique
+  description  String?
+  thumbnailUrl String?
+  previewVideoUrl String?
+  langauage    String?
+  level        String?
+  price        Float          @default(0.0)
+  status       CourseStatus   @default(DRAFT)
+  isPublished  Boolean        @default(false)
+  categoryId   String
+  category     Category       @relation(fields: [categoryId], references: [id])
+  instructorId String
+  instructor   User           @relation(fields: [instructorId], references: [id])
+  sections     Section[]
+  enrollments  Enrollment[]
+  whishlist    Wishlist[]
+  reviews      CourseReview[]
+  payments     Payment[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([categoryId])
+  @@index([instructorId])
+}
+
+///////////////////// 
+// SECTION 
+/////////////////////
+
+model Section {
+  id        String   @id @default(uuid())
+  title     String
+  order     Int
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id])
+  lessons   Lesson[]
+  createdAt DateTime @default(now())
+
+  @@index([courseId])
+}
+
+///////////////////// 
+// LESSON 
+/////////////////////
+
+model Lesson {
+  id          String           @id @default(uuid())
+  title       String
+  description String?
+  order       Int
+  type        LessonType
+  isPreview   Boolean          @default(false)
+  sectionId   String
+  section     Section          @relation(fields: [sectionId], references: [id])
+  progress    LessonProgress[]
+  createdAt   DateTime         @default(now())
+
+  @@index([sectionId])
+}
+
+///////////////////// 
+// ENROLLMENT 
+/////////////////////
+
+model Enrollment {
+  id          String           @id @default(uuid())
+  userId      String
+  courseId    String
+  status      EnrollmentStatus @default(ACTIVE)
+  progress    Float            @default(0)
+  completedAt DateTime?
+  user        User             @relation(fields: [userId], references: [id])
+  course      Course           @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+  @@index([courseId])
+}
+
+///////////////////// 
+// PROGRESS 
+/////////////////////
+
+model LessonProgress {
+  id         String  @id @default(uuid())
+  userId     String
+  lessonId   String
+  watchedSec Int
+  completed  Boolean @default(false)
+  user       User    @relation(fields: [userId], references: [id])
+  lesson     Lesson  @relation(fields: [lessonId], references: [id])
+
+  @@unique([userId, lessonId])
+}
+
+///////////////////// 
+// WISHLIST 
+///////////////////// 
+
+model Wishlist {
+  id       String @id @default(uuid())
+  userId   String
+  courseId String
+  user     User   @relation(fields: [userId], references: [id])
+  course   Course @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+}
+
+///////////////////// 
+// PAYMENT 
+///////////////////// 
+
+model Payment {
+  id            String        @id @default(uuid())
+  userId        String
+  courseId      String
+  amount        Decimal       @db.Decimal(10, 2)
+  currency      String        @default("INR")
+  provider      String
+  transactionId String        @unique()
+  status        PaymentStatus	@default(PENDING)
+  paidAt        DateTime?
+  user          User          @relation(fields: [userId], references: [id])
+  course        Course        @relation(fields: [courseId], references: [id])
+  createdAt     DateTime      @default(now())
+}
+
+///////////////////// 
+// REVIEWS 
+///////////////////// 
+
+model CourseReview {
+  id       String  @id @default(uuid())
+  rating   Int
+  comment  String?
+  userId   String
+  courseId String
+  user     User    @relation(fields: [userId], references: [id])
+  course   Course  @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+}
