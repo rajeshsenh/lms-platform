@@ -3,7 +3,7 @@ import { type Course, CourseStatus, type Prisma } from "../../generated/prisma";
 
 export const courseRepository = {
 	async findById(id: string) {
-		return await prisma.course.findUnique({ where: { id } });
+		return await prisma.course.findUnique({ where: { id }, include: { sections: true } });
 	},
 
 	async create(data: Course) {
@@ -22,6 +22,7 @@ export const courseRepository = {
 			orderBy: {
 				createdAt: "desc",
 			},
+			include: { sections: true },
 		});
 	},
 

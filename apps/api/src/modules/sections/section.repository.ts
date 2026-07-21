@@ -3,7 +3,7 @@ import type { Prisma, Section } from "../../generated/prisma";
 
 export const sectionRepository = {
 	async findById(id: string) {
-		return await prisma.section.findUnique({ where: { id } });
+		return await prisma.section.findUnique({ where: { id }, include: { lessons: true } });
 	},
 
 	async create(data: Section) {

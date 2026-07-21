@@ -10,9 +10,11 @@ type Category = {
 	children?: Category[];
 };
 
-const createdBy = "4f70e92a-d73b-47f3-a245-2df8c199e644";
-
-const createCategory = async (category: Category, parentId: string | null = null) => {
+const createCategory = async (
+	createdBy: string,
+	category: Category,
+	parentId: string | null = null,
+) => {
 	const slug = slugify(category.name, { lower: true });
 
 	const saved = await prisma.category.upsert({
@@ -34,16 +36,16 @@ const createCategory = async (category: Category, parentId: string | null = null
 
 	if (category.children?.length) {
 		for (let i = 0; i < category.children.length; i++) {
-			await createCategory(category.children[i], saved.id);
+			await createCategory(createdBy, category.children[i], saved.id);
 		}
 	}
 };
 
-export const seedCategories = async () => {
+export const seedCategories = async (createdBy: string) => {
 	logger.info("🌱 Seeding Categories...");
 
 	for (let i = 0; i < categories.length; i++) {
-		await createCategory(categories[i], null);
+		await createCategory(createdBy, categories[i], null);
 	}
 
 	logger.info("✅ Categories Seeded");

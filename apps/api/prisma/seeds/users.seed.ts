@@ -6,18 +6,22 @@ import { users } from "../data/users";
 
 const createUsers = async () => {
 	const plainTextPassword = "password123";
-	const salt = await bcrypt.genSalt(10);
-	const passwordHash = await bcrypt.hash(plainTextPassword, salt);
+	const passwordHash = await bcrypt.hash(plainTextPassword, 10);
 
-	for (const u of users) {
-		const user = await prisma.user.upsert({
-			where: { email: u.email },
-			update: {},
+	for (const user of users) {
+		await prisma.user.upsert({
+			where: { email: user.email },
+			update: {
+				firstName: user.firstName,
+				lastName: user.lastName,
+				role: user.role,
+			},
 			create: {
-				email: u.email,
-				firstName: u.firstName,
-				lastName: u.lastName,
+				email: user.email,
+				firstName: user.firstName,
+				lastName: user.lastName,
 				password: passwordHash,
+				role: user.role,
 			},
 		});
 		logger.info(

@@ -4,7 +4,7 @@ import { sectionRepository } from "./section.repository";
 export const sectionService = {
 	async createSection(data: Section) {
 		const orderAvailable = await sectionRepository.isOrderAvailable(data.courseId, data.order);
-		if (!orderAvailable) throw new Error("Section order already exists.");
+		if (orderAvailable) throw new Error("Section order already exists.");
 		return await sectionRepository.create(data);
 	},
 
