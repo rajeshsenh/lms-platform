@@ -9,6 +9,7 @@ import logger from "./config/logger";
 import authRouter from "./modules/auth/auth.routes";
 import categoryRouter from "./modules/category/category.routes";
 import courseRouter from "./modules/courses/course.routes";
+import lessonRouter from "./modules/lessons/lesson.routes";
 import sectionRouter from "./modules/sections/section.routes";
 import userRouter from "./modules/user/user.routes";
 
@@ -58,6 +59,7 @@ app.use(`${API_PREFIX}/user`, userRouter);
 app.use(`${API_PREFIX}/category`, categoryRouter);
 app.use(`${API_PREFIX}/course`, courseRouter);
 app.use(`${API_PREFIX}/section`, sectionRouter);
+app.use(`${API_PREFIX}/lesson`, lessonRouter);
 
 // 7. Health check endpoint
 app.get("/health", (_, res) => {
