@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import { env } from "../config/env";
 
-export const generateToken = (id: string) => {
-	const payload = { id };
+export const generateToken = (id: string, role: string) => {
+	const payload = { id, role };
 	const { JWT_EXPIRES_IN, JWT_SECRET } = env;
 
 	if (!JWT_SECRET) throw new Error("JWT_SECRET missing.");

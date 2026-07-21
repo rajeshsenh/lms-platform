@@ -10,3 +10,12 @@ export interface ILoginData {
 	email: string;
 	password: string;
 }
+
+export interface IAuthUser {
+	id: string;
+}
+
+export interface IChangePassword {
+	currentPassword: string;
+	newPassword: string;
+}
