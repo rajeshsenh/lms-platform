@@ -8,6 +8,7 @@ import { env } from "./config/env";
 import logger from "./config/logger";
 import authRouter from "./modules/auth/auth.routes";
 import categoryRouter from "./modules/category/category.routes";
+import courseRouter from "./modules/courses/course.routes";
 import userRouter from "./modules/user/user.routes";
 
 const app = express();
@@ -54,6 +55,7 @@ app.use("/api", apiLimiter);
 app.use(`${API_PREFIX}/auth`, authRouter);
 app.use(`${API_PREFIX}/user`, userRouter);
 app.use(`${API_PREFIX}/category`, categoryRouter);
+app.use(`${API_PREFIX}/course`, courseRouter);
 
 // 7. Health check endpoint
 app.get("/health", (_, res) => {
