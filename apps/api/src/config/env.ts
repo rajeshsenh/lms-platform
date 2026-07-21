@@ -21,4 +21,5 @@ export const env = {
 	LOG_DIRECTORY: requireEnv("LOG_DIRECTORY"),
 	LOG_MAX_SIZE: requireEnv("LOG_MAX_SIZE"),
 	LOG_MAX_FILES: requireEnv("LOG_MAX_FILES"),
+	RESET_DATABASE: requireEnv("RESET_DATABASE"),
 };

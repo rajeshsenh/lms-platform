@@ -55,29 +55,33 @@ enum UserStatus {
   DELETED
 }
 
+enum EmailVerifiedStatus {
+  PENDING
+  VERIFIED
+}
+
 ///////////////////// 
 // USERS 
 /////////////////////
 
 model User {
-  id            String           @id @default(uuid())
-  firstName     String           @db.VarChar(100)
-  lastName      String           @db.VarChar(100)
-  email         String           @unique @db.VarChar(255)
-  password      String           @db.VarChar(255)
-  role          UserRole         @default(STUDENT)
+  id            String              @id @default(uuid())
+  firstName     String              @db.VarChar(100)
+  lastName      String              @db.VarChar(100)
+  email         String              @unique @db.VarChar(255)
+  password      String               @db.VarChar(255)
+  role          UserRole             @default(STUDENT)
   avatarUrl     String?
-  isActive      Boolean          @default(true)
-  emailVerified Boolean          @default(false)
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  emailVerified EmailVerifiedStatus   @default(PENDING)
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
   courses       Course[]
   enrollemnts   Enrollment[]
   wishlist      Wishlist[]
   payments      Payment[]
   progress      LessonProgress[]
   reviews       CourseReview[]
-  status        UserStatus       @default(ACTIVE)
+  status        UserStatus             @default(ACTIVE)
 
   @@index([email])
 }
