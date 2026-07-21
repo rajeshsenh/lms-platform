@@ -7,6 +7,7 @@ import helmet from "helmet";
 import { env } from "./config/env";
 import logger from "./config/logger";
 import authRouter from "./modules/auth/auth.routes";
+import userRouter from "./modules/user/user.routes";
 
 const app = express();
 
@@ -50,6 +51,7 @@ app.use("/api", apiLimiter);
 
 // 6. API Routes
 app.use(`${API_PREFIX}/auth`, authRouter);
+app.use(`${API_PREFIX}/user`, userRouter);
 
 // 7. Health check endpoint
 app.get("/health", (_, res) => {
