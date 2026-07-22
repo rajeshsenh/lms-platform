@@ -2,7 +2,7 @@ import { performance } from "node:perf_hooks";
 import { prisma } from "../../src/config/db";
 import { env } from "../../src/config/env";
 import logger from "../../src/config/logger";
-// import { seedCategories } from "./category.seed";
+import { seedCategories } from "./category.seed";
 import { seedUsers } from "./users.seed";
 
 const cleanDatabase = async () => {
@@ -34,7 +34,16 @@ async function seed() {
 	}
 
 	await seedUsers();
-	// await seedCategories();
+
+	const admin = await prisma.user.findFirst({
+		where: {
+			role: "ADMIN",
+		},
+	});
+
+	if (admin?.id) {
+		await seedCategories(admin?.id);
+	}
 
 	const duration = ((performance.now() - start) / 1000).toFixed(2);
 

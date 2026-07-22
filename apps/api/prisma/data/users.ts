@@ -1,14 +1,10 @@
-export enum UserRole {
-	STUDENT,
-	INSTRUCTOR,
-	ADMIN,
-}
+import { UserRole } from "../../src/generated/prisma";
 
 interface SeedUser {
 	email: string;
 	firstName: string;
 	lastName: string;
-	role?: UserRole;
+	role: UserRole;
 }
 
 export const users: SeedUser[] = [
@@ -19,13 +15,13 @@ export const users: SeedUser[] = [
 		role: UserRole.ADMIN,
 	},
 	{
-		email: "instructor@eduforge.com",
+		email: "jane.instructor@eduforge.com",
 		firstName: "Jane",
 		lastName: "Instructor",
 		role: UserRole.INSTRUCTOR,
 	},
 	{
-		email: "student@eduforge.com",
+		email: "john.student@eduforge.com",
 		firstName: "John",
 		lastName: "Student",
 		role: UserRole.STUDENT,
