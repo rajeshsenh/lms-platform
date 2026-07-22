@@ -30,6 +30,10 @@ export const lessonRepository = {
 		return await prisma.lesson.delete({ where: { id } });
 	},
 
+	async isOrderAvailable(sectionId: string, order: number) {
+		return await prisma.lesson.findFirst({ where: { sectionId, order } });
+	},
+
 	async updateProgress(userId: string, lessonId: string, data: any) {
 		return await prisma.lessonProgress.upsert({
 			where: {
